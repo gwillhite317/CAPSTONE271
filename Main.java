@@ -1,17 +1,89 @@
-import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.Map;
 
-public class Main {
-    private static final Scanner scanner = new Scanner(System.in);
+/**
+ * @author Kass Serek
+ * @version 1 (April 2024)
+ */
 
+//responsible for managing grocery list creation as the result of interaction
+public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
         System.out.println("Grocery List Creator");
-        Person person = createShopper();
-        GroceryStore wholeFoods = createWholeFoodsStore();
-        GroceryStore target = createTargetStore();
+
+        System.out.print("Are you a student? (yes/no): ");
+        String isStudent = scanner.nextLine().toLowerCase();
+
+        Person person;
+
+        //person object based on user input
+        if (isStudent.equals("yes")) {
+            System.out.print("Enter your first name: ");
+            String givenNames = scanner.nextLine();
+            System.out.print("Enter your last name: ");
+            String familyName = scanner.nextLine();
+            System.out.print("Enter your student ID: ");
+            int studentID = scanner.nextInt();
+
+            person = new Student(studentID, givenNames, familyName);
+        } else {
+            System.out.print("Enter your first name: ");
+            String givenNames = scanner.nextLine();
+            System.out.print("Enter your last name: ");
+            String familyName = scanner.nextLine();
+
+            person = new Person(givenNames, familyName);
+        }
+
+        //create grocery items
+        GroceryItem apples = new GroceryItem("Apples", 2.0, "Produce");
+        GroceryItem bread = new GroceryItem("Bread", 1.5, "Bakery");
+        GroceryItem milk = new GroceryItem("Milk", 3.0, "Dairy");
+        GroceryItem eggs = new GroceryItem("Eggs", 2.5, "Dairy");
+        GroceryItem pasta = new GroceryItem("Pasta", 1.0, "Pasta");
+        GroceryItem rice = new GroceryItem("Rice", 2.0, "Grains");
+        GroceryItem chicken = new GroceryItem("Chicken", 5.0, "Meat");
+
+        //create grocery stores
+        GroceryStore aldi = new GroceryStore("Aldi");
+        aldi.addGroceryItem(apples, 2.0,"Aisle 1");
+        aldi.addGroceryItem(bread, 1.5, "Aisle 2");
+        aldi.addGroceryItem(milk, 3.0, "Aisle 3");
+        aldi.addGroceryItem(eggs, 2.5, "Aisle 3");
+
+        GroceryStore target = new GroceryStore("Target");
+        target.addGroceryItem(eggs, 2.7, "Aisle 1"); //different price at target
+        target.addGroceryItem(pasta, 1.0, "Aisle 2");
+        target.addGroceryItem(rice, 2.0, "Aisle 3");
+        target.addGroceryItem(chicken, 5.0, "Aisle 4");
+        target.addGroceryItem(bread, 3.0, "Aisle 5"); //different price at target
+
+        //create grocery list
         GroceryList groceryList = new GroceryList();
-        chooseStoreAndItems(wholeFoods, target, groceryList);
+
+        System.out.println("\nAvailable Grocery Stores:");
+        System.out.println("1. Aldi");
+        System.out.println("2. Target");
+
+        int storeChoice = 0;
+        while (storeChoice != 1 && storeChoice != 2) {
+            System.out.print("Enter the number of the store you want to shop at: ");
+            if (scanner.hasNextInt()) {
+                storeChoice = scanner.nextInt();
+                if (storeChoice == 1) {
+                    addItemsFromStore(aldi, groceryList, scanner);
+                } else if (storeChoice == 2) {
+                    addItemsFromStore(target, groceryList, scanner);
+                } else {
+                    System.out.println("Invalid choice.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next();
+            }
+        }
         groceryList.setPerson(person);
         System.out.println("\nYour Grocery List:");
         System.out.println(groceryList.finalList());
@@ -19,107 +91,51 @@ public class Main {
         scanner.close();
     }
 
-    private static Person createShopper() {
-        System.out.print("Are you a student? (yes/no): ");
-        String isStudent = scanner.nextLine().toLowerCase();
-        System.out.print("Enter your first name: ");
-        String givenNames = scanner.nextLine();
-        System.out.print("Enter your last name: ");
-        String familyName = scanner.nextLine();
-        System.out.print("Enter birth year: ");
-        int year = scanner.nextInt();
-        System.out.print("Enter birth month: ");
-        int month = scanner.nextInt();
-        System.out.print("Enter birth day: ");
-        int day = scanner.nextInt();
-        scanner.nextLine();
+    //add items from grocery store to the grocery list
+    private static void addItemsFromStore(GroceryStore store, GroceryList groceryList, Scanner scanner) {
+        String itemName;
+        int quantity;
 
-        if (isStudent.equals("yes")) {
-            System.out.print("Enter your student ID: ");
-            int studentID = scanner.nextInt();
-            scanner.nextLine();
-            return new Student(studentID, familyName, givenNames, LocalDate.of(year, month, day));
-        } else {
-            return new Person(familyName, givenNames, LocalDate.of(year, month, day));
-        }
-    }
-
-    private static void chooseStoreAndItems(GroceryStore WholeFoods, GroceryStore target, GroceryList groceryList) {
-        System.out.println("\nAvailable Grocery Stores:");
-        System.out.println("1. Whole foods");
-        System.out.println("2. Target");
-
-        GroceryStore chosenStore = null;
-        while (chosenStore == null) {
-            System.out.print("Enter the number of the store you want to shop at: ");
-            int storeChoice = readInt();
-            if (storeChoice == 1) {
-                chosenStore = WholeFoods;
-            } else if (storeChoice == 2) {
-                chosenStore = target;
-            } else {
-                System.out.println("Invalid choice.");
-            }
-        }
-        addItems(chosenStore, groceryList);
-    }
-
-    private static void addItems(GroceryStore store, GroceryList groceryList) {
-        System.out.println("\nAvailable Items :");
+        System.out.println("\nAvailable Items:");
         Map<String, GroceryItem> stock = store.getStock();
-        stock.forEach((name, item) -> System.out.println(name + " - $" + item.getUnitPrice() + " in " + item.getLocation()));
+        int count = 1;
+        for (String item : stock.keySet()) {
+            System.out.println(count + ". " + item + " - $" + store.getPrice(item));
+            count++;
+        }
 
-        System.out.println("Enter the name of the item you want to add (or 'done' to finish):");
-        String itemName = scanner.nextLine();
-        while (!itemName.equalsIgnoreCase("done")) {
-            if (stock.containsKey(itemName)) {
+        boolean done = false;
+        while (!done) {
+            System.out.print("Enter the number of the item you want to add (or 0 to finish): ");
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                if (choice == 0) {
+                    done = true;
+                    continue;
+                }
+                if (choice < 1 || choice > stock.size()) {
+                    System.out.println("Invalid choice. Please try again.");
+                    continue;
+                }
+                itemName = (String) stock.keySet().toArray()[choice - 1];
+
                 System.out.print("Enter quantity: ");
-                int quantity = readInt();
-                GroceryItemOrder order = new GroceryItemOrder(itemName, quantity, stock.get(itemName).getUnitPrice());
-                groceryList.add(order);
-                System.out.println(quantity + " " + itemName + " added to the list.");
+                if (scanner.hasNextInt()) {
+                    quantity = scanner.nextInt();
+                    scanner.nextLine();
+
+                    double price = store.getPrice(itemName);
+                    GroceryItemOrder itemOrder = new GroceryItemOrder(itemName, quantity, price);
+                    groceryList.add(itemOrder);
+                } else {
+                    System.out.println("Invalid input for quantity. Please enter a number.");
+                    scanner.next();
+                }
             } else {
-                System.out.println("Item not found.");
+                System.out.println("Invalid input for item number. Please enter a number.");
+                scanner.next();
             }
-            System.out.println("Enter the name of the next item you want to add (or 'done' to finish):");
-            itemName = scanner.nextLine();
         }
-    }
-    private static int readInt() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("Invalid input. Please enter a number.");
-            scanner.next();
-            scanner.nextLine();
-        }
-        int number = scanner.nextInt();
-        scanner.nextLine();
-        return number;
-    }
-
-    private static GroceryStore createWholeFoodsStore() {
-        GroceryStore WholeFoods = new GroceryStore("Whole Foods");
-        WholeFoods.addGroceryItem(new GroceryItem("Apples", 0.99, "Aisle 1"), 0.99, "Aisle 1");
-        WholeFoods.addGroceryItem(new GroceryItem("Bread", 1.29, "Aisle 2"), 1.29, "Aisle 2");
-        WholeFoods.addGroceryItem(new GroceryItem("Milk", 0.89, "Aisle 3"), 0.89, "Aisle 3");
-        WholeFoods.addGroceryItem(new GroceryItem("Snapper", 5.99, "Fishmonger counter"), 5.99, "Fishmonger counter");
-        WholeFoods.addGroceryItem(new GroceryItem("Steak", 1.29, "Steak"), 9.99, "Butcher Counter");
-        WholeFoods.addGroceryItem(new GroceryItem("Cilantro", 0.79, "Aisle 4"),0.79, "Aisle 4");
-        WholeFoods.addGroceryItem(new GroceryItem("Parsley", 0.89, "Aisle 4"), .89, "Aisle 4");
-
-        return WholeFoods;
-    }
-
-    private static GroceryStore createTargetStore() {
-        GroceryStore target = new GroceryStore("Target");
-        target.addGroceryItem(new GroceryItem("Eggs", 2.09, "Aisle 1"), 2.09, "Aisle 1");
-        target.addGroceryItem(new GroceryItem("Pasta", 0.99, "Aisle 2"), 0.99, "Aisle 2");
-        target.addGroceryItem(new GroceryItem("Milk", 1.49, "Aisle 3"), 1.49, "Aisle 3");
-        target.addGroceryItem(new GroceryItem("Chicken", 5.49, "Aisle 4"), 5.49, "Aisle 4");
-        target.addGroceryItem(new GroceryItem("Flour", 4.99, "Aisle 5"), 4.99, "Aisle 5");
-        target.addGroceryItem(new GroceryItem("Olives", 1.99, "Aisle 6"), 1.99, "Aisle 6");
-        target.addGroceryItem(new GroceryItem("Apples",.49, "Aisle 7"), .49, "Aisle 7");
-        target.addGroceryItem(new GroceryItem("Wild Rice", 3.99, "Aisle 8"), 3.99, "Aisle 8");
-        return target;
     }
 }
-

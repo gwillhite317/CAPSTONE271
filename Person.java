@@ -1,106 +1,97 @@
-
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
 
+/**
+ * @author Kass Serek
+ * @version 3 (April 2024)
+ */
 
-
+//represents a person with a family name, given name(s), and a date of birth
 public class Person implements Comparable<Person>, Shopper {
-
-    // Constant to represent the age of majority
     private static final int YEAR_OF_MAJORITY = 18;
+    private String familyName;
+    private String givenNames;
+    final LocalDate dob;
 
-    // Instance variables for the Person class
-    private String familyName;  // The family name of the person
-    private String givenNames;  // The given name(s) of the person
-    final LocalDate DOB;  // The date of birth of the person
-
-    // Constructor without birthdate
-    public Person(String fName, String lName) {
-        familyName = lName;
-        givenNames = fName;
-        DOB = null; // No birthdate provided
+    //constructor for a Person object with the given parameters
+    public Person(String fN, String gNs) {
+        familyName = fN;
+        givenNames = gNs;
+        dob = null;
     }
 
-    // Constructor with birthdate
-    public Person(String fName, String lName, int day, int month, int year) {
-        familyName = lName;
-        givenNames = fName;
-        DOB = LocalDate.of(year, month, day); // Set the date of birth
+    //constructor for a Person object with the given parameters
+    public Person(String fN, String gNs, int day, int month, int year) {
+        familyName = gNs;
+        givenNames = fN;
+        dob = LocalDate.of(year, month, day);
     }
 
-    // Constructor with birthdate as LocalDate
-    public Person(String fName, String lName, LocalDate date){
-        familyName = lName;
-        givenNames = fName;
-        DOB = date; // Set the date of birth
+    //constructor for a Person object with the given parameters
+    public Person(String fN, String gNs, LocalDate date) {
+        familyName = gNs;
+        givenNames = fN;
+        dob = date;
     }
 
-    // Default constructor
-    public Person () {
+    //constructor for a Person object
+    public Person() {
         familyName = "";
         givenNames = "";
-        DOB = null;
+        dob = null;
     }
 
-    /**
-     * Method to check if the person has reached the age of majority
-     *
-     * @return true if 18 or older
-     */
+    //check if the person is 18 or older
     public boolean isEighteen() {
-        return DOB != null && !DOB.plusYears(YEAR_OF_MAJORITY).isAfter(LocalDate.now());
+        return !(dob.plusYears(YEAR_OF_MAJORITY).isAfter(LocalDate.now()));
     }
 
-    /**
-     * Method to check if two Person objects are the same
-     *
-     * @param that other Person
-     */
+    //checks if two people are the same
     public boolean equals(Object that) {
         if (!(that instanceof Person)) {
             return false;
         }
-        Person otherPerson = (Person) that;
-        return this.familyName.equals(otherPerson.familyName) &&
-                this.givenNames.equals(otherPerson.givenNames) &&
-                this.DOB.equals(otherPerson.DOB);
+        return this.familyName.equals(((Person)that).familyName) && this.givenNames.equals(((Person)that).givenNames) && this.dob.equals(((Person)that).dob);
     }
-    @Override
-    public int hashCode() {
-        return Objects.hash(familyName, givenNames, DOB);
-    }
-    /**
-     * Method to compare two Person objects based on Name, then dob
-     * @param o the object to be compared.
-     * @return value suitable for Comparable
-     */
-    public int compareTo(Person o){
+
+    //compare two people based on their family names, given names, and date of birth
+    public int compareTo(Person o) {
         int result;
         result = familyName.compareTo(o.familyName);
         if (result == 0) {
             result = givenNames.compareTo(o.givenNames);
             if (result == 0)
-                result = DOB.compareTo(o.DOB);
+                result = dob.compareTo(o.dob);
         }
         return result;
     }
 
-    /**
-     * Method to return a string representation of the person.
-     *
-     * @return a string containing the person's first and last name
-     */
-    @Override
+    //string representation of a person object
     public String toString() {
-        return givenNames + " " + familyName + (DOB != null ? " (" + DOB + ")" : "");
+        return givenNames + "" + familyName;
+    }
+
+    //check if the person can marry (is of legal age)
+    public boolean canMarry() {
+        return isEighteen();
+    }
+
+    //getter for family name
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    //getter for given names
+    public String getGivenNames() {
+        return givenNames;
+    }
+
+    //getter for date of birth
+    public LocalDate getDob() {
+        return dob;
     }
 
     @Override
     public double applyDiscount(double totalAmount) {
         return totalAmount;
     }
-
 }
