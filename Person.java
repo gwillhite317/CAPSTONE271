@@ -1,10 +1,7 @@
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
 
+import java.time.LocalDate;
+import java.util.Objects;
 
 
 public class Person implements Comparable<Person>, Shopper {
@@ -72,11 +69,7 @@ public class Person implements Comparable<Person>, Shopper {
     public int hashCode() {
         return Objects.hash(familyName, givenNames, DOB);
     }
-    /**
-     * Method to compare two Person objects based on Name, then dob
-     * @param o the object to be compared.
-     * @return value suitable for Comparable
-     */
+
     public int compareTo(Person o){
         int result;
         result = familyName.compareTo(o.familyName);
@@ -88,11 +81,7 @@ public class Person implements Comparable<Person>, Shopper {
         return result;
     }
 
-    /**
-     * Method to return a string representation of the person.
-     *
-     * @return a string containing the person's first and last name
-     */
+
     @Override
     public String toString() {
         return givenNames + " " + familyName + (DOB != null ? " (" + DOB + ")" : "");

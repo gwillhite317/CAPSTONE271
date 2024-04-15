@@ -1,3 +1,5 @@
+package src;
+
 /**
  * @author Kass Serek
  * @version 2 (April 2024)

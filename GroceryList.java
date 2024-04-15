@@ -1,3 +1,4 @@
+
 /**
  * @author Kass Serek
  * @version 2 (April 2024)
@@ -5,14 +6,14 @@
 
 //represents a grocery list
 public class GroceryList {
-    private GroceryItemOrder[] list; //array for groceries
+    private src.GroceryItemOrder[] list; //array for groceries
     int num; //number of items in the list
     private Person person;
 
     //constructor for a grocery list object with the given parameters
     public GroceryList() {
         //list that can have 10 items
-        list = new GroceryItemOrder[10];
+        list = new src.GroceryItemOrder[10];
         num = 0;
         System.out.println("Creating new list");
     }
@@ -22,7 +23,7 @@ public class GroceryList {
     }
 
     //add item to the grocery list
-    public void add(GroceryItemOrder item) {
+    public void add(src.GroceryItemOrder item) {
         if (num < 10) {
             list[num] = item;
             num += 1;
