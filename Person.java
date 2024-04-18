@@ -1,10 +1,7 @@
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
 
+import java.time.LocalDate;
+import java.util.Objects;
 
 
 public class Person implements Comparable<Person>, Shopper {
@@ -18,25 +15,18 @@ public class Person implements Comparable<Person>, Shopper {
     final LocalDate DOB;  // The date of birth of the person
 
     // Constructor without birthdate
-    public Person(String fName, String lName) {
-        familyName = lName;
-        givenNames = fName;
-        DOB = null; // No birthdate provided
-    }
-
-    // Constructor with birthdate
-    public Person(String fName, String lName, int day, int month, int year) {
-        familyName = lName;
-        givenNames = fName;
-        DOB = LocalDate.of(year, month, day); // Set the date of birth
-    }
 
     // Constructor with birthdate as LocalDate
+
     public Person(String fName, String lName, LocalDate date){
         familyName = lName;
         givenNames = fName;
-        DOB = date; // Set the date of birth
+        DOB = date;
     }
+
+
+
+    // Constructor with birthdate
 
     // Default constructor
     public Person () {
@@ -57,26 +47,23 @@ public class Person implements Comparable<Person>, Shopper {
     /**
      * Method to check if two Person objects are the same
      *
-     * @param that other Person
+     * @param
      */
-    public boolean equals(Object that) {
-        if (!(that instanceof Person)) {
-            return false;
-        }
-        Person otherPerson = (Person) that;
-        return this.familyName.equals(otherPerson.familyName) &&
-                this.givenNames.equals(otherPerson.givenNames) &&
-                this.DOB.equals(otherPerson.DOB);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return Objects.equals(familyName, person.familyName) &&
+                Objects.equals(givenNames, person.givenNames) &&
+                Objects.equals(DOB, person.DOB);  // This is null-safe
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(familyName, givenNames, DOB);
     }
-    /**
-     * Method to compare two Person objects based on Name, then dob
-     * @param o the object to be compared.
-     * @return value suitable for Comparable
-     */
+
     public int compareTo(Person o){
         int result;
         result = familyName.compareTo(o.familyName);
@@ -88,11 +75,7 @@ public class Person implements Comparable<Person>, Shopper {
         return result;
     }
 
-    /**
-     * Method to return a string representation of the person.
-     *
-     * @return a string containing the person's first and last name
-     */
+
     @Override
     public String toString() {
         return givenNames + " " + familyName + (DOB != null ? " (" + DOB + ")" : "");
