@@ -1,3 +1,10 @@
+/**
+ * @Author Greyson Willhite
+ * @version 4
+ */
+
+
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,29 +18,52 @@ public class Course {
     private int credits;
     private ProfessorE instructor;
 
+    private List<ProfessorE> instructors;
+    private Semester semester;  // Reference to the Semester
+
     private List<Student> enrolled;
+
     private List<Student> waitListed;
 
     private List<ProfessorE> profEnrolled;
 
-
     public Course(String department, String name, int number, int creditHours) {
-
         this.department = department;
         this.name = name;
         this.number = number;
         this.creditHours = creditHours;
         this.enrolled = new ArrayList<>();
         this.waitListed = new ArrayList<>();
-
-
+        this.instructors = new ArrayList<>();
     }
 
     public Course(String title, int credits) {
         this.title = title;
         this.credits = credits;
-        this.enrolled = new ArrayList<>(); // Initialize enrolled list
-        this.waitListed = new ArrayList<>(); // Initialize waitListed list
+        this.enrolled = new ArrayList<>();
+        this.waitListed = new ArrayList<>();
+    }
+
+
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public int getCreditHours(){
+        return creditHours;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public Semester getSemester() {
+        return semester;
     }
 
     public void enrollStudent(Student student) {
@@ -45,65 +75,40 @@ public class Course {
     public void unenrollStudent(Student student) {
         enrolled.remove(student);
     }
-    // Constructor for creating a new CourseE object.
 
+    public List<Student> getEnrolled() {
+        return enrolled;  // Return the list of enrolled students
+    }
 
-    // Assigns a professor to teach the course.
 
     public void addInstructor(ProfessorE professor) {
-
-        if (instructor == null) {
-
-            instructor = professor;
-// Assigns the professor to teach the course.
-
-            professor.addCourse(this);
-// Adds the course to the professor's teaching schedule.
-
-        }
-
+        this.instructor = professor;  // Directly set the instructor
+        professor.addCourse(this);    // Ensure the bidirectional link is maintained
     }
 
-
-    // Removes the instructor from teaching the course.
 
     public void removeInstructor(ProfessorE professor) {
-
-        if (instructor == professor) {
-
-            instructor = null;
-// Removes the instructor from teaching the course.
-
+        if (this.instructor.equals(professor)) {
+            this.instructor = null;
+            professor.removeCourse(this);
         }
+    }
 
+    public ProfessorE getInstructor() {
+        return instructor;
     }
 
 
-    @Override   ///toString for StudentCourseTester
+    @Override
     public String toString() {
         StringBuilder roster = new StringBuilder(title + " (" + credits + " credits): ");
         if (enrolled.isEmpty()) {
             roster.append("\nNo students enrolled in the course");
         } else {
-            for (Student student : enrolled) {
-                roster.append("\nStudent Name: ").append(student.toString());
-            }
+            roster.append(enrolled.stream()
+                    .map(Student::toString)
+                    .collect(Collectors.joining("\n")));
         }
         return roster.toString();
     }
 }
-/// ToString for ProfersorEcourseE tester
-///      public String toString() {
-//        return title + " (Credits: " + credits + ")";
-//
-//    }
-
-/// Tostring for Main/ recent assignment including groceryList:
-///     public String toString() {
-//        String enrolledStudents = enrolled.stream()
-//                .map(Student::toString)
-//                .collect(Collectors.joining("\n"));
-//        return String.format("Course Name: '%s', Credit Hours: %d\nEnrolled Students:\n%s",
-//                name, creditHours, enrolledStudents.isEmpty() ? "None" : enrolledStudents);
-//    }
-//}

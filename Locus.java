@@ -1,3 +1,8 @@
+/**
+ * @author Greyson Willhite
+ * @version 4
+ */
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,12 +17,21 @@ class Locus {
         private int maxCapacity;
         private Set<String> registeredStudents = new HashSet<>();
         private Set<String> waitlistedStudents = new HashSet<>();
+        private Semester semester; // Adding Semester reference
 
         public Course(String departmentName, int courseNumber, String givenName, int maxCapacity) {
             this.departmentName = departmentName;
             this.courseNumber = courseNumber;
             this.givenName = givenName;
             this.maxCapacity = maxCapacity;
+        }
+
+        public void setSemester(Semester semester) {
+            this.semester = semester;
+        }
+
+        public Semester getSemester() {
+            return semester;
         }
 
         public void addStudent(String studentID) {
@@ -50,8 +64,9 @@ class Locus {
         }
     }
 
-    public void recordCourse(String departmentName, int courseNumber, String title, int maxCapacity) {
+    public void recordCourse(String departmentName, int courseNumber, String title, int maxCapacity, Semester semester) {
         Course newCourse = new Course(departmentName, courseNumber, title, maxCapacity);
+        newCourse.setSemester(semester); // Link the course with a semester
         courses.add(newCourse);
     }
 
