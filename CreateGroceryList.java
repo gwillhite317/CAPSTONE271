@@ -1,12 +1,13 @@
 /**
-import java.util.Scanner;
-import java.util.List;
+ * @author Kass Serek
+ * version 3
+ */
 
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.Map;
 
-public class Main {
+public class CreateGroceryList {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -51,7 +52,7 @@ public class Main {
             } else if (whichDiscount.equals("professor")) {
                 System.out.print("What is your title?: ");
                 String title = scanner.nextLine();
-                return new ProfessorE(name);
+                return new ProfessorE(title, familyName, LocalDate.of(year, month, day));
             }
         } else {
             return new Person(familyName, givenNames, LocalDate.of(year, month, day));
@@ -138,52 +139,3 @@ public class Main {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Are you a professor? (yes/no)");
-        String response = scanner.nextLine();
-        if (!response.equalsIgnoreCase("yes")) {
-            System.out.println("This system is only accessible to professors.");
-            return;
-        }
-
-        System.out.println("Enter your name:");
-        String name = scanner.nextLine();
-        // Assuming we have a method to get professor by name
-        ProfessorE professor = new ProfessorE(name);
-
-        // Assuming we have some pre-defined semesters and courses
-        Semester fall2023 = new Semester("Fall 2023", new Registry());
-        // You would populate courses here
-
-        System.out.println("Here are the courses you're teaching:");
-        List<Course> courses = fall2023.findCoursesByProfessor(professor);
-        courses.forEach(course -> System.out.println(course.getName()));
-
-        // Further interaction to manage courses, enrollments etc.
-    }
-}
-**/

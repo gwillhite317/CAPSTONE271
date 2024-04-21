@@ -1,109 +1,114 @@
+/**
+ * @Author Greyson Willhite
+ * @version 4
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Course {
-    private String department;
-    private String name;
-    private int number;
-    private int creditHours;
-    public String title;
-    private int credits;
-    private ProfessorE instructor;
+    private String department;  //Academic department a course is a part of
+    private String name;   // Name of the course
+    private int number;   //Course number/ID
+    private int creditHours;    //Credit hours for a course
+    public String title;   // name of the course
+    private int credits;  //  credits for completing the course
+    private ProfessorE instructor;  //instructor for course
 
-    private List<Student> enrolled;
-    private List<Student> waitListed;
+    private List<ProfessorE> instructors;  //list for multiple instructors
+    private Semester semester;  // Reference to the Semester
 
-    private List<ProfessorE> profEnrolled;
+    private List<Student> enrolled;  //currently enrolled students
 
+    private List<Student> waitListed;  //students waitlisted for a course
+
+    /**
+     * Default constructer for a course
+     * @param department
+     * @param name
+     * @param number
+     * @param creditHours
+     */
 
     public Course(String department, String name, int number, int creditHours) {
-
         this.department = department;
         this.name = name;
         this.number = number;
         this.creditHours = creditHours;
         this.enrolled = new ArrayList<>();
         this.waitListed = new ArrayList<>();
-
-
+        this.instructors = new ArrayList<>();
     }
 
-    public Course(String title, int credits) {
-        this.title = title;
-        this.credits = credits;
-        this.enrolled = new ArrayList<>(); // Initialize enrolled list
-        this.waitListed = new ArrayList<>(); // Initialize waitListed list
+
+    public String getName() {
+        return name;
     }
 
-    public void enrollStudent(Student student) {
+    public int getNumber() {
+        return number;
+    }
+
+    public int getCreditHours(){
+        return creditHours;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    //enrolls student in a course
+    public void enrollStudent(Student student) {  //puts student in enrolled list, used by registry
         if (!enrolled.contains(student)) {
             enrolled.add(student);
         }
     }
 
-    public void unenrollStudent(Student student) {
+    //unenroll student in a course
+    public void unenrollStudent(Student student) {  //removes student from enrolled list, used in registry
         enrolled.remove(student);
     }
-    // Constructor for creating a new CourseE object.
 
+    public List<Student> getEnrolled() {
+        return enrolled;  // Return the list of enrolled students
+    }
 
-    // Assigns a professor to teach the course.
 
     public void addInstructor(ProfessorE professor) {
-
-        if (instructor == null) {
-
-            instructor = professor;
-// Assigns the professor to teach the course.
-
-            professor.addCourse(this);
-// Adds the course to the professor's teaching schedule.
-
-        }
-
+        this.instructor = professor;  // Directly set the instructor to a course
+        professor.addCourse(this);    // Ensure bidirectional link
     }
 
-
-    // Removes the instructor from teaching the course.
-
+    // Method for removing an instructor from a course
     public void removeInstructor(ProfessorE professor) {
-
-        if (instructor == professor) {
-
-            instructor = null;
-// Removes the instructor from teaching the course.
-
+        if (this.instructor.equals(professor)) {
+            this.instructor = null;
+            professor.removeCourse(this);
         }
+    }
 
+    // Getter method for instructor
+    public ProfessorE getInstructor() {
+        return instructor;
     }
 
 
-    @Override   ///toString for StudentCourseTester
-    public String toString() {
+    @Override
+    public String toString() {  //To string for being enrolled in a course
         StringBuilder roster = new StringBuilder(title + " (" + credits + " credits): ");
         if (enrolled.isEmpty()) {
             roster.append("\nNo students enrolled in the course");
         } else {
-            for (Student student : enrolled) {
-                roster.append("\nStudent Name: ").append(student.toString());
-            }
+            roster.append(enrolled.stream()
+                    .map(Student::toString)
+                    .collect(Collectors.joining("\n")));
         }
         return roster.toString();
     }
 }
-/// ToString for ProfersorEcourseE tester
-///      public String toString() {
-//        return title + " (Credits: " + credits + ")";
-//
-//    }
-
-/// Tostring for Main/ recent assignment including groceryList:
-///     public String toString() {
-//        String enrolledStudents = enrolled.stream()
-//                .map(Student::toString)
-//                .collect(Collectors.joining("\n"));
-//        return String.format("Course Name: '%s', Credit Hours: %d\nEnrolled Students:\n%s",
-//                name, creditHours, enrolledStudents.isEmpty() ? "None" : enrolledStudents);
-//    }
-//}

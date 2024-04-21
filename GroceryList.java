@@ -1,3 +1,4 @@
+
 /**
  * @author Kass Serek
  * @version 2 (April 2024)
@@ -46,6 +47,8 @@ public class GroceryList {
     public double applyDiscountIfStudent(double totalAmount) {
         if (person instanceof Student) {
             return person.applyDiscount(totalAmount);
+        } else if (person instanceof ProfessorE) {
+            return person.applyDiscount(totalAmount);
         } else {
             return totalAmount;
         }
@@ -74,6 +77,9 @@ public class GroceryList {
         double discountedTotalCost = applyDiscountIfStudent(totalCost);
         if (person instanceof Student) {
             System.out.print(" (after student discount: $" + String.format("%.2f", discountedTotalCost) + ")");
+        }
+        if (person instanceof ProfessorE) {
+            System.out.print(" (after professor discount: $" + String.format("%.2f", discountedTotalCost) + ")");
         }
 
         return "";

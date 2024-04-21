@@ -1,3 +1,8 @@
+/**
+ * @author Greyson Willhite
+ * @version 4
+ */
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +17,7 @@ class Locus {
         private int maxCapacity;
         private Set<String> registeredStudents = new HashSet<>();
         private Set<String> waitlistedStudents = new HashSet<>();
+        private Semester semester; // Adding Semester reference
 
         public Course(String departmentName, int courseNumber, String givenName, int maxCapacity) {
             this.departmentName = departmentName;
@@ -19,7 +25,17 @@ class Locus {
             this.givenName = givenName;
             this.maxCapacity = maxCapacity;
         }
+        // Setter and getter methods for the semester
+        public void setSemester(Semester semester) {
+            this.semester = semester;
+        }
 
+        public Semester getSemester() {
+            return semester;
+        }
+
+
+        //Ads a student to the course, checking capacity
         public void addStudent(String studentID) {
             if (registeredStudents.size() < maxCapacity) {
                 registeredStudents.add(studentID);
@@ -27,7 +43,7 @@ class Locus {
                 waitlistedStudents.add(studentID);
             }
         }
-
+        //Removes a student form the course and tries to promote a waitlisted student
         public boolean removeStudent(String studentID) {
             if (registeredStudents.remove(studentID)) {
                 possiblyPromoteWaitlistedStudent();
@@ -36,6 +52,8 @@ class Locus {
             return waitlistedStudents.remove(studentID);
         }
 
+
+        //Helper method to promote the first student on the waitlist
         private void possiblyPromoteWaitlistedStudent() {
             if (!waitlistedStudents.isEmpty()) {
                 String firstWaitlisted = waitlistedStudents.iterator().next();
@@ -50,30 +68,7 @@ class Locus {
         }
     }
 
-    public void recordCourse(String departmentName, int courseNumber, String title, int maxCapacity) {
-        Course newCourse = new Course(departmentName, courseNumber, title, maxCapacity);
-        courses.add(newCourse);
-    }
-
-    public void enrollStudent(String studentID, String departmentName, int courseNumber) {
-        Course course = findCourse(departmentName, courseNumber);
-        if (course != null) {
-            course.addStudent(studentID);
-        }
-    }
-
-    public boolean removeStudent(String studentID, String departmentName, int courseNumber) {
-        Course course = findCourse(departmentName, courseNumber);
-        return course != null && course.removeStudent(studentID);
-    }
-
-    private Course findCourse(String departmentName, int courseNumber) {
-        return courses.stream()
-                .filter(c -> c.departmentName.equals(departmentName) && c.courseNumber == courseNumber)
-                .findFirst()
-                .orElse(null);
-    }
-
+    //Compiles and returns a report of all courses along with registrations
     public String reportRegistrations() {
         return courses.stream()
                 .map(Course::toString)

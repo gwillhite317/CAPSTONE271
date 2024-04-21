@@ -1,9 +1,8 @@
 /**
  * @author Kass Serek
- * @version 2 (April 2024)
+ * @version 3
  */
 
-//represents a grocery item order
 public class GroceryItemOrder {
     String name;
     int quantity;
